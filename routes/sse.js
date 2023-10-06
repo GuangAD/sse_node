@@ -36,19 +36,24 @@ function toDataString(data) {
 router.all('/:tableId/sse', (ctx, next) => {
   // 打印日志，判断 api 是否被调用
   console.log(ctx.method, ctx.req.url, new Date().toLocaleString())
-  ctx.res.writeHead(200, {
-    'Content-Type': 'text/event-stream',
-    Connection: 'keep-alive',
-    'Cache-Control': 'private, no-cache, no-store, must-revalidate, max-age=0, no-transform',
-  });
+  // ctx.res.writeHead(200, {
+  //   'Content-Type': 'text/event-stream',
+  //   Connection: 'keep-alive',
+  //   'Cache-Control': 'private, no-cache, no-store, must-revalidate, max-age=0, no-transform',
+  // });
+  ctx.set('Content-Type', 'text/event-stream');
+  ctx.set('Cache-Control', 'no-cache');
+  ctx.set('Connection', 'keep-alive');
+  // ctx.body = tableTransform.pipe(ctx.res)
   // tableTransform.pipe(ctx.res)
-  ctx.body = ctx.req.pipe(tableTransform)
+  ctx.body = tableTransform
 })
 router.post('/addCart/:tableId', (ctx) => {
   console.log(ctx.request.body);
   tableTransform.write({
     retry: 10000,
-    data: ctx.request.body
+    data: {name: 'XXXXXXXXXXXx'}
   })
+  ctx.body = 'success'
 })
 module.exports = router
